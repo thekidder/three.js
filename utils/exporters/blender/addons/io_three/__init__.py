@@ -306,6 +306,10 @@ def restore_export_settings(properties, settings):
         constants.INFLUENCES_PER_VERTEX,
         constants.EXPORT_OPTIONS[constants.INFLUENCES_PER_VERTEX])
 
+    properties.option_flip_yz = settings.get(
+        constants.FLIP_YZ,
+        constants.EXPORT_OPTIONS[constants.FLIP_YZ])
+
     properties.option_apply_modifiers = settings.get(
         constants.APPLY_MODIFIERS,
         constants.EXPORT_OPTIONS[constants.APPLY_MODIFIERS])
@@ -459,6 +463,7 @@ def set_settings(properties):
         constants.BONES: properties.option_bones,
         constants.EXTRA_VGROUPS: properties.option_extra_vgroups,
         constants.APPLY_MODIFIERS: properties.option_apply_modifiers,
+        constants.FLIP_YZ: properties.option_flip_yz,
         constants.GEOMETRY_TYPE: properties.option_geometry_type,
         constants.INDEX_TYPE: properties.option_index_type,
 
@@ -661,6 +666,11 @@ class ExportThree(bpy.types.Operator, ExportHelper):
         items=logging_types,
         default=constants.DISABLED)
 
+    option_flip_yz = BoolProperty(
+        name="Flip YZ",
+        description="Flip Y and Z axes",
+        default=constants.EXPORT_OPTIONS[constants.FLIP_YZ])
+
     option_geometry_type = EnumProperty(
         name="Type",
         description="Geometry type",
@@ -844,6 +854,9 @@ class ExportThree(bpy.types.Operator, ExportHelper):
 
         row = layout.row()
         row.prop(self.properties, 'option_apply_modifiers')
+
+        row = layout.row()
+        row.prop(self.properties, 'option_flip_yz')
 
         row = layout.row()
         row.prop(self.properties, 'option_geometry_type')

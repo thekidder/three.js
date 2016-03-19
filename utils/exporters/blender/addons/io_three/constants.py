@@ -103,6 +103,7 @@ CUSTOM_PROPERTIES = 'customProperties'
 EMBED_GEOMETRY = 'embedGeometry'
 EMBED_ANIMATION = 'embedAnimation'
 OFF = 'off'
+FLIP_YZ = 'flipYZ'
 
 GLOBAL = 'global'
 BUFFER_GEOMETRY = 'BufferGeometry'
@@ -166,7 +167,8 @@ EXPORT_OPTIONS = {
     EMBED_ANIMATION: True,
     GEOMETRY_TYPE: GEOMETRY,
     INFLUENCES_PER_VERTEX: 2,
-    INDENT: True
+    INDENT: True,
+    FLIP_YZ: True,
 }
 
 

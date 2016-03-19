@@ -293,7 +293,7 @@ def faces(mesh, options, material_list=None):
     logger.debug("Normals enabled = %s", opt_normals)
 
     uv_indices = _uvs(mesh)[1] if opt_uvs else None
-    vertex_normals = _normals(mesh) if opt_normals else None
+    vertex_normals = _normals(mesh, options) if opt_normals else None
     vertex_colours = vertex_colors(mesh) if opt_colours else None
 
     faces_data = []
@@ -356,7 +356,10 @@ def faces(mesh, options, material_list=None):
         if vertex_normals:
             for vertex in face.vertices:
                 normal = mesh.vertices[vertex].normal
-                normal = (normal.x, normal.y, normal.z)
+                if options.get(constants.FLIP_YZ):
+                    normal = (normal.x, -normal.z, normal.y)
+                else:
+                    normal = (normal.x, normal.y, normal.z)
                 face_data.append(normal_indices[str(normal)])
                 mask[constants.NORMALS] = True
 
@@ -600,7 +603,7 @@ def materials(mesh, options):
 
 
 @_mesh
-def normals(mesh):
+def normals(mesh, options):
     """
 
     :param mesh:
@@ -610,7 +613,7 @@ def normals(mesh):
     logger.debug("mesh.normals(%s)", mesh)
     normal_vectors = []
 
-    for vector in _normals(mesh):
+    for vector in _normals(mesh, options):
         normal_vectors.extend(vector)
 
     return normal_vectors
@@ -745,18 +748,22 @@ def vertex_colors(mesh):
 
 
 @_mesh
-def vertices(mesh):
+def vertices(mesh, options):
     """
 
     :param mesh:
     :rtype: []
 
     """
-    logger.debug("mesh.vertices(%s)", mesh)
+    logger.debug("mesh.vertices(%s %r)", mesh, options.get(constants.FLIP_YZ))
     vertices_ = []
 
-    for vertex in mesh.vertices:
-        vertices_.extend((vertex.co.x, vertex.co.y, vertex.co.z))
+    if options.get(constants.FLIP_YZ):
+        for vertex in mesh.vertices:
+            vertices_.extend((vertex.co.x, -vertex.co.z, vertex.co.y))
+    else:
+        for vertex in mesh.vertices:
+            vertices_.extend((vertex.co.x, vertex.co.y, vertex.co.z))
 
     return vertices_
 
@@ -885,7 +892,7 @@ def _diffuse_map(mat):
     return diffuse
 
 
-def _normals(mesh):
+def _normals(mesh, options):
     """
 
     :param mesh:
@@ -899,7 +906,10 @@ def _normals(mesh):
 
         for vertex_index in face.vertices:
             normal = mesh.vertices[vertex_index].normal
-            vector = (normal.x, normal.y, normal.z)
+            if options.get(constants.FLIP_YZ):
+                vector = (normal.x, -normal.z, normal.y)
+            else:
+                vector = (normal.x, normal.y, normal.z)
 
             str_vec = str(vector)
             try:
